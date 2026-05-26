@@ -196,6 +196,11 @@ button:hover {
   <span class="toggle-eye" onclick="togglePassword('password', this)">👁️</span>
 </div>
 
+<div class="password-wrapper">
+  <input id="confirmPassword" type="password" placeholder="Confirm Password">
+  <span class="toggle-eye" onclick="togglePassword('confirmPassword', this)">👁️</span>
+</div>
+
 <button onclick="signup()">Create Account</button>
 
 <div class="loader" id="loader"></div>
@@ -210,49 +215,66 @@ button:hover {
 
 <script>
 function togglePassword(id, el){
-  const input=document.getElementById(id);
-  input.type=input.type==="password"?"text":"password";
-  el.textContent=input.type==="password"?"👁️":"🙈";
+  const input = document.getElementById(id);
+  input.type = input.type === "password" ? "text" : "password";
+  el.textContent = input.type === "password" ? "👁️" : "🙈";
 }
 
 async function signup(){
 
-  const name=document.getElementById('name').value;
-  const email=document.getElementById('email').value;
-  const password=document.getElementById('password').value;
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
 
-  const loader=document.getElementById('loader');
-  const status=document.getElementById('status');
+  const loader = document.getElementById('loader');
+  const status = document.getElementById('status');
 
-  loader.style.display="block";
-  status.style.display="none";
+  status.style.display = "none";
+
+  // validation
+  if(!name || !email || !password || !confirmPassword){
+    status.style.display = "block";
+    status.className = "status error";
+    status.innerText = "All fields are required";
+    return;
+  }
+
+  if(password !== confirmPassword){
+    status.style.display = "block";
+    status.className = "status error";
+    status.innerText = "Passwords do not match";
+    return;
+  }
+
+  loader.style.display = "block";
 
   try{
-    const res=await fetch('/api/users/create',{
+    const res = await fetch('/api/users/create',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,email,password})
+      body:JSON.stringify({ name, email, password })
     });
 
-    const data=await res.json();
+    const data = await res.json();
 
-    loader.style.display="none";
-    status.style.display="block";
+    loader.style.display = "none";
+    status.style.display = "block";
 
-    status.innerText=data.message||"Done";
+    status.innerText = data.message || "Done";
 
     if(data.status){
-      status.className="status success";
+      status.className = "status success";
       setTimeout(()=>location.replace('login.html'),800);
     }else{
-      status.className="status error";
+      status.className = "status error";
     }
 
   }catch{
-    loader.style.display="none";
-    status.style.display="block";
-    status.className="status error";
-    status.innerText="Server error";
+    loader.style.display = "none";
+    status.style.display = "block";
+    status.className = "status error";
+    status.innerText = "Server error";
   }
 }
 </script>

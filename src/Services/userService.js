@@ -21,7 +21,8 @@ class userService {
         const user = await userRepository.createUser({
             name,
             email,
-            password:hashedPassword
+            password:hashedPassword,
+            confirmPassword: hashedPassword
         });
         const loginUrl = `${process.env.APP_URL}`;
         await sendMail({
