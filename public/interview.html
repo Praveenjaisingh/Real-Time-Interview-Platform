@@ -341,7 +341,13 @@
 
     async function getInterviewById() {
       try {
-        const res = await fetch(`${BASE_URL}/${getId.value}`, {
+        const id = getId.value.trim();
+        if (!id) {
+          showToast("Interview ID is required", "error");
+          return;
+        }
+
+        const res = await fetch(`${BASE_URL}/${id}`, {
           headers: { "Authorization": "Bearer " + getToken() }
         });
 
