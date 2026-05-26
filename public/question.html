@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Question Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Poppins, sans-serif;
+}
+select option{
+  background:#0f172a;
+  color:white;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 14px;
+}
+
+.home-btn {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.title-bar {
+  font-weight: 600;
+  font-size: 16px;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body{
+  min-height:100vh;
+  background: radial-gradient(circle at top,#0f172a,#1e293b,#0f172a);
+  color:white;
+  padding:30px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  font-size:38px;
+  margin-bottom:10px;
+  background: linear-gradient(to right,#60a5fa,#a78bfa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.back-btn{
+  width:auto;
+  padding:10px 16px;
+  margin:10px auto 25px;
+  display:block;
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:12px;
+  cursor:pointer;
+  color:white;
+  transition:0.2s;
+}
+
+.back-btn:hover{
+  transform:scale(1.05);
+  border-color:#60a5fa;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+  gap:22px;
+}
+
+.card{
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px;
+  padding:20px;
+  backdrop-filter: blur(15px);
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+input, textarea, select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color:white;
+  outline:none;
+}
+
+textarea{
+  min-height:90px;
+  resize:none;
+}
+
+button{
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  color:white;
+  background: linear-gradient(135deg,#3b82f6,#8b5cf6);
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.03);
+}
+
+.question-card{
+  margin-top:12px;
+  padding:14px;
+  border-radius:14px;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.question-card:hover{
+  transform:translateY(-3px);
+  border-color:#60a5fa;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.title{
+  font-weight:600;
+  font-size:16px;
+}
+
+.badge{
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid;
+}
+
+.badge.easy{ color:#22c55e; border-color:#22c55e; }
+.badge.medium{ color:#facc15; border-color:#facc15; }
+.badge.hard{ color:#ef4444; border-color:#ef4444; }
+
+.desc{
+  margin-top:6px;
+  font-size:13px;
+  color:#cbd5e1;
+}
+
+.meta{
+  margin-top:8px;
+  font-size:11px;
+  color:#94a3b8;
+}
+
+.toast{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  padding:12px 16px;
+  border-radius:12px;
+  font-size:14px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:0.3s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.toast.success{
+  background: rgba(34,197,94,0.15);
+  border:1px solid #22c55e;
+}
+
+.toast.error{
+  background: rgba(239,68,68,0.15);
+  border:1px solid #ef4444;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Question Dashboard</h1>
+
+<div class="topbar">
+  <a href="home.html" class="home-btn">← Home</a>
+  <div class="title-bar">Interview Dashboard</div>
+</div>
+
+<div class="grid">
+
+<div class="card">
+  <h3>Create Question</h3>
+
+  <input id="title" placeholder="Title">
+  <textarea id="description" placeholder="Description"></textarea>
+
+  <select id="difficulty">
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+
+  <input id="tags" placeholder="Tags (comma separated)">
+
+  <button onclick="createQuestion()">Create</button>
+
+  <div id="createList"></div>
+</div>
+
+<div class="card">
+  <h3>All Questions</h3>
+  <button onclick="getQuestions()">Fetch</button>
+  <div id="list"></div>
+</div>
+
+<div class="card">
+  <h3>Get By ID</h3>
+  <input id="qid" placeholder="Question ID">
+  <button onclick="getById()">Get</button>
+  <div id="single"></div>
+</div>
+
+<div class="card">
+  <h3>Update Question</h3>
+
+  <input id="uid" placeholder="ID">
+  <input id="utitle" placeholder="Title">
+  <textarea id="udesc" placeholder="Description"></textarea>
+
+  <select id="udifficulty">
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+
+  <input id="utags" placeholder="Tags">
+
+  <button onclick="updateQuestion()">Update</button>
+
+  <div id="updateList"></div>
+</div>
+
+<div class="card">
+  <h3>Delete Question</h3>
+
+  <input id="did" placeholder="Question ID">
+  <button onclick="deleteQuestion()">Delete</button>
+
+  <div id="deleteList"></div>
+</div>
+
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+const BASE_URL = "/api/questions";
+
+function getToken(){
+  return localStorage.getItem("token");
+}
+
+
+function showToast(msg,type="success"){
+  const toast = document.getElementById("toast");
+  toast.className = `toast show ${type}`;
+  toast.innerText = msg;
+
+  setTimeout(()=>{
+    toast.className = "toast";
+  },2500);
+}
+
+async function handle(res){
+  const data = await res.json();
+  if(!res.ok || data.status === false){
+    throw new Error(data.errors?.[0] || "Request failed");
+  }
+  return data;
+}
+
+async function createQuestion(){
+  try{
+    const res = await fetch(BASE_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+getToken()
+      },
+      body:JSON.stringify({
+        title:title.value,
+        description:description.value,
+        difficulty:difficulty.value,
+        tags: tags.value
+          ? tags.value.split(",").map(t=>t.trim()).filter(Boolean)
+          : []
+      })
+    });
+
+    const data = await handle(res);
+
+    createList.innerHTML = `<div class="question-card"><div class="title">${data.data.title}</div></div>`;
+    showToast("Question created","success");
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+}
+
+async function getQuestions(){
+  try{
+    const res = await fetch(BASE_URL,{
+      headers:{ "Authorization":"Bearer "+getToken() }
+    });
+
+    const data = await handle(res);
+
+    list.innerHTML = data.data.map(q=>`
+      <div class="question-card">
+        <div class="row">
+          <div class="title">${q.title}</div>
+          <div class="badge ${q.difficulty}">${q.difficulty}</div>
+        </div>
+        <div class="desc">${q.description}</div>
+        <div class="meta">ID: ${q._id || q.id}</div>
+      </div>
+    `).join("");
+
+    showToast("Loaded questions","success");
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+}
+
+async function getById(){
+  try{
+    const id = qid.value.trim();
+
+    if(!id){
+      showToast("Id is required","error");
+      return; 
+    }
+
+    const res = await fetch(`${BASE_URL}/${id}`,{
+      headers:{ "Authorization":"Bearer "+getToken() }
+    });
+
+    const data = await handle(res);
+
+    const q = data.data;
+
+    single.innerHTML = `
+      <div class="question-card">
+        <div class="row">
+          <div class="title">${q.title}</div>
+          <div class="badge ${q.difficulty}">${q.difficulty}</div>
+        </div>
+        <div class="desc">${q.description}</div>
+      </div>
+    `;
+
+    showToast("Loaded","success");
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+}
+
+async function updateQuestion(){
+  try{
+    const id = uid.value.trim();
+
+    if(!id){
+      showToast("Id is required","error");
+      return;
+    }
+
+    const res = await fetch(`${BASE_URL}/${id}`,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+getToken()
+      },
+      body:JSON.stringify({
+        title: utitle.value,
+        description: udesc.value,
+        difficulty: udifficulty.value,
+        tags: utags.value
+          ? utags.value.split(",").map(t=>t.trim()).filter(Boolean)
+          : []
+      })
+    });
+
+    const data = await handle(res);
+
+    updateList.innerHTML =
+      `<div class="question-card"><div class="title">Updated Successfully</div></div>`;
+
+    showToast("Updated","success");
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+}
+
+async function deleteQuestion(){
+  try{
+    const id = did.value.trim();
+
+    const res = await fetch(`${BASE_URL}/${id}`,{
+      method:"DELETE",
+      headers:{ "Authorization":"Bearer "+getToken() }
+    });
+
+    await handle(res);
+
+    deleteList.innerHTML = `<div class="question-card"><div class="title">Deleted Successfully</div></div>`;
+    showToast("Deleted","success");
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+}
+
+</script>
+
+</body>
+</html>

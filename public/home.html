@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 38px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 5px;
+
+      background: rgba(34, 197, 94, 0.95);
+      color: white;
+
+      padding: 14px 20px;
+      border-radius: 12px;
+
+      font-size: 14px;
+      font-weight: 600;
+
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+      transform: translateX(120%);
+      transition: 0.4s ease;
+
+      z-index: 9999;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.error {
+      background: rgba(239, 68, 68, 0.95);
+    }
+
+    @media(max-width:768px) {
+
+      .toast {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+
+        width: auto;
+        text-align: center;
+      }
+
+    }
+
+    .logout-btn {
+      border: none;
+      outline: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      text-decoration: none;
+      color: white;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 25px;
+      backdrop-filter: blur(18px);
+      transition: 0.25s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 150px;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(96, 165, 250, 0.6);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .desc {
+      font-size: 13px;
+      margin-top: 6px;
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 768px) {
+
+      body {
+        padding: 15px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 30px;
+      }
+
+      .logout-btn {
+        width: 100%;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="topbar">
+      <h1>Dashboard Home</h1>
+      <div id="toast" class="toast"></div>
+
+      <button class="logout-btn" onclick="logoutUser()">
+        Logout
+      </button>
+    </div>
+
+    <div class="grid">
+
+      <a class="card" href="interview.html">
+        <div class="icon">💼</div>
+        <div class="title">Interview</div>
+        <div class="desc">Manage and schedule interviews</div>
+      </a>
+
+      <a class="card" href="chat.html">
+        <div class="icon">💬</div>
+        <div class="title">Chat</div>
+        <div class="desc">Real-time messaging system</div>
+      </a>
+
+      <a class="card" href="feedback.html">
+        <div class="icon">⭐</div>
+        <div class="title">Feedback</div>
+        <div class="desc">View and submit feedback</div>
+      </a>
+
+      <a class="card" href="notification.html">
+        <div class="icon">🔔</div>
+        <div class="title">Notifications</div>
+        <div class="desc">Latest updates and alerts</div>
+      </a>
+
+      <a class="card" href="question.html">
+        <div class="icon">❓</div>
+        <div class="title">Questions</div>
+        <div class="desc">Interview question bank</div>
+      </a>
+
+      <a class="card" href="room.html">
+        <div class="icon">🏠</div>
+        <div class="title">Rooms</div>
+        <div class="desc">Join or create interview rooms</div>
+      </a>
+
+      <a class="card" href="submission.html">
+        <div class="icon">📤</div>
+        <div class="title">Submission</div>
+        <div class="desc">Submit assignments or answers</div>
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.replace("login.html");
+    }
+
+    history.pushState(null, null, location.href);
+
+    window.onpopstate = function () {
+      history.go(1);
+    };
+
+    function showToast(message, type = "success") {
+
+      const toast = document.getElementById("toast");
+
+      toast.innerText = message;
+
+      toast.className = "toast show";
+
+      if (type === "error") {
+        toast.classList.add("error");
+      }
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    }
+
+    async function logoutUser() {
+
+      try {
+
+        const response = await fetch("/api/users/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+          localStorage.removeItem("token");
+          showToast("Logout successful");
+          setTimeout(() => {
+            window.location.replace("login.html");
+          }, 1200);
+
+        } else {
+
+          showToast(data.message || "Logout failed", "error");
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        showToast("Something went wrong", "error");
+      }
+    }
+  </script>
+
+</body>
+
+</html>
