@@ -261,7 +261,7 @@ async function signup(){
     loader.style.display = "none";
     status.style.display = "block";
 
-    status.innerText = data.message || "Done";
+    status.innerText = data.errors || "Something Went Wrong";
 
     if(data.status){
       status.className = "status success";
