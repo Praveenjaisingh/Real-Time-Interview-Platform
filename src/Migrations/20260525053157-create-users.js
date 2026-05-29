@@ -30,6 +30,14 @@ module.exports = {
       confirmPassword: {
         type: Sequelize.STRING
       },
+      resetToken: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      resetTokenExpiry: {
+        type: DataTypes.BIGINT,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
