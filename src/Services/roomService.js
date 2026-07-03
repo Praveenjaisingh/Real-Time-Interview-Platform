@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const roomRepository = require("../Repositories/roomRepository");
 const AppError = require("../Helpers/AppError");
+const dailyService = require("./dailyService");
 const { Interviews } = require("../Models");
 
 class RoomService {
@@ -19,10 +20,15 @@ class RoomService {
 
     const roomId = uuidv4();
 
+    // Create the actual video room on Daily.co - the returned URL is what
+    // the frontend embeds to give a Meet/Teams-style call experience.
+    const videoRoom = await dailyService.createRoom(roomId);
+
     const room = await roomRepository.createRoom({
       interviewId: Number(data.interviewId),
       createdBy: user.id,
       roomId,
+      meetingLink: videoRoom.url,
       status: "active"
     });
 
@@ -34,10 +40,32 @@ class RoomService {
     const room = await roomRepository.findByRoomId(roomId);
     if (!room) throw new AppError("Room not found");
 
-    const exists = await roomRepository.findParticipant(roomId, user.id);
-    if (exists) throw new AppError("Already joined");
+    if (room.status === "ended") {
+      throw new AppError("This interview room has ended");
+    }
 
-    return await roomRepository.addParticipant(roomId, user.id);
+    const exists = await roomRepository.findParticipant(roomId, user.id);
+
+    if (!exists) {
+      await roomRepository.addParticipant(roomId, user.id);
+    }
+
+    // The host (room creator) joins with owner privileges (can mute
+    // others, start recording, end the call for everyone).
+    const isOwner = room.createdBy === user.id;
+
+    const token = await dailyService.createMeetingToken(
+      roomId,
+      user.name || user.email || `User ${user.id}`,
+      isOwner
+    );
+
+    return {
+      roomId: room.roomId,
+      meetingLink: room.meetingLink,
+      token,
+      isOwner
+    };
   }
 
   async leaveRoom(roomId, userId) {
@@ -58,6 +86,8 @@ class RoomService {
     if (room.createdBy !== userId) {
       throw new AppError("Only interviewer can end room");
     }
+
+    await dailyService.deleteRoom(roomId);
 
     await roomRepository.updateRoomStatus(roomId, "ended");
     await roomRepository.removeAllParticipants(roomId);

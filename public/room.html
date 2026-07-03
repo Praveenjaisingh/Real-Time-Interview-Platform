@@ -488,6 +488,14 @@
 
       </div>
 
+      <a
+        class="home-btn"
+        style="display:inline-block;margin-top:14px;text-decoration:none;text-align:center;"
+        href="/video-call.html?roomId=${item.roomId}"
+      >
+        🎥 Join Video Call
+      </a>
+
     </div>
   `;
     }
@@ -528,19 +536,16 @@
 
       try {
 
-        const res = await fetch(
-          `${BASE_URL}/${joinRoomId.value}/join`,
-          {
-            method: "POST",
-            headers: {
-              "Authorization": "Bearer " + token()
-            }
-          }
-        );
+        if (!joinRoomId.value) {
+          throw new Error("Enter a room ID first");
+        }
 
-        const data = await handle(res);
+        joinRes.innerHTML = `<div class="desc">Connecting…</div>`;
 
-        joinRes.innerHTML = renderRoom(data.data);
+        // Joining now hands back a video meeting link + token, so we
+        // redirect straight into the live call instead of rendering a card.
+        window.location.href =
+          `/video-call.html?roomId=${encodeURIComponent(joinRoomId.value)}`;
 
       } catch (e) {
 

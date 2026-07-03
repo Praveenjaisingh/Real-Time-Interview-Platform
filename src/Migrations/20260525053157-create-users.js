@@ -31,11 +31,11 @@ module.exports = {
         type: Sequelize.STRING
       },
       resetToken: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: true
       },
       resetTokenExpiry: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         allowNull: true
       },
       createdAt: {

@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     difficulty: DataTypes.ENUM('easy', 'medium', 'hard'),
     category: DataTypes.STRING,
+    source: {
+      type: DataTypes.STRING,
+      defaultValue: 'manual'
+    },
+    rationale: DataTypes.TEXT,
 
   }, {
 

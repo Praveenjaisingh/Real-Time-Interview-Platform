@@ -11,11 +11,11 @@ module.exports = {
       },
 
       roomId: {
-        type: Sequelize.STRING, // ✅ FIXED (UUID)
+        type: Sequelize.STRING, 
         allowNull: false,
         references: {
           model: 'InterviewRooms',
-          key: 'roomId' // ✅ IMPORTANT
+          key: 'roomId' 
         },
         onDelete: 'CASCADE'
       },

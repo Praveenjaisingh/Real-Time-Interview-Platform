@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Question Generator</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Poppins, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, #1e3a8a33, transparent 30%),
+    radial-gradient(circle at bottom right, #7c3aed33, transparent 30%),
+    linear-gradient(135deg, #0f172a, #1e293b, #334155);
+  color: white;
+  padding: 24px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.home-btn {
+  color: white;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.home-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 24px;
+  backdrop-filter: blur(18px);
+  margin-bottom: 24px;
+}
+
+.card h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+label:first-of-type {
+  margin-top: 0;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  outline: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-family: inherit;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 120px;
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #60a5fa, #a78bfa);
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.question-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.q-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.18);
+  color: #93c5fd;
+  text-transform: capitalize;
+}
+
+.badge.difficulty-hard { background: rgba(248, 113, 113, 0.18); color: #fca5a5; }
+.badge.difficulty-medium { background: rgba(251, 191, 36, 0.18); color: #fcd34d; }
+.badge.difficulty-easy { background: rgba(74, 222, 128, 0.18); color: #86efac; }
+
+.q-text {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.q-rationale {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.error-box {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fecaca;
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 20px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: 0.25s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="topbar">
+    <div class="topbar-title">✨ AI Question Generator</div>
+    <a href="/question.html" class="home-btn">← Back to Questions</a>
+  </div>
+
+  <div class="card">
+    <h3>Generate questions from a resume + job description</h3>
+
+    <label>Job description</label>
+    <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
+
+    <label>Candidate resume (PDF or .txt)</label>
+    <input type="file" id="resumeFile" accept=".pdf,.txt" />
+    <div class="hint">Or paste resume text instead:</div>
+    <textarea id="resumeText" placeholder="Paste resume text (optional if a file is uploaded)"></textarea>
+
+    <div class="row">
+      <div>
+        <label>Number of questions</label>
+        <input type="number" id="questionCount" value="8" min="3" max="15" />
+      </div>
+      <div>
+        <label>Link to interview ID (optional)</label>
+        <input type="text" id="interviewId" placeholder="e.g. 12" />
+      </div>
+    </div>
+
+    <button class="btn" id="generateBtn" onclick="generateQuestions()">Generate Questions</button>
+  </div>
+
+  <div id="results"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function token() {
+    return localStorage.getItem("token");
+  }
+
+  function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.className = "toast show";
+    if (type === "error") toast.style.borderColor = "rgba(239,68,68,0.4)";
+    setTimeout(() => toast.classList.remove("show"), 3000);
+  }
+
+  function renderQuestions(questions) {
+    return questions.map(q => `
+      <div class="question-card">
+        <div class="q-meta">
+          <span class="badge">${q.category || "role_specific"}</span>
+          <span class="badge difficulty-${q.difficulty || "medium"}">${q.difficulty || "medium"}</span>
+        </div>
+        <div class="q-text">${q.title || q.question}</div>
+        ${(q.rationale || q.description) ? `<div class="q-rationale">${q.rationale || q.description}</div>` : ""}
+      </div>
+    `).join("");
+  }
+
+  async function generateQuestions() {
+
+    const btn = document.getElementById("generateBtn");
+    const results = document.getElementById("results");
+    const jobDescription = document.getElementById("jobDescription").value.trim();
+    const resumeText = document.getElementById("resumeText").value.trim();
+    const resumeFile = document.getElementById("resumeFile").files[0];
+    const questionCount = document.getElementById("questionCount").value;
+    const interviewId = document.getElementById("interviewId").value.trim();
+
+    results.innerHTML = "";
+
+    if (!jobDescription) {
+      results.innerHTML = `<div class="error-box">Job description is required</div>`;
+      return;
+    }
+
+    if (!resumeFile && !resumeText) {
+      results.innerHTML = `<div class="error-box">Upload a resume file or paste resume text</div>`;
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Generating…";
+
+    try {
+
+      const formData = new FormData();
+      formData.append("jobDescription", jobDescription);
+      formData.append("questionCount", questionCount);
+
+      if (resumeFile) formData.append("resume", resumeFile);
+      if (resumeText) formData.append("resumeText", resumeText);
+      if (interviewId) formData.append("interviewId", interviewId);
+
+      const res = await fetch("/api/questions/generate/ai", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token()
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.status === false) {
+        throw new Error(data.errors?.[0] || "Failed to generate questions");
+      }
+
+      results.innerHTML = renderQuestions(data.data);
+      showToast(data.message || "Questions generated");
+
+    } catch (error) {
+      results.innerHTML = `<div class="error-box">${error.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Generate Questions";
+    }
+  }
+</script>
+
+</body>
+</html>
